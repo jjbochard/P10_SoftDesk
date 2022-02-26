@@ -24,9 +24,6 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
-    def get_products(self):
-        return "\n".join([p.username for p in self.user.all()])
-
 
 class Contributor(models.Model):
     AUTHOR = "AUTHOR"
@@ -43,7 +40,7 @@ class Contributor(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.user
+        return "{}_{}".format(self.user.__str__(), self.project.__str__())
 
 
 class Issue(models.Model):
@@ -106,4 +103,4 @@ class Comment(models.Model):
     created_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.title
+        return self.description
