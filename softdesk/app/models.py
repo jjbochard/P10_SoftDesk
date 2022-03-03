@@ -36,8 +36,13 @@ class Contributor(models.Model):
         max_length=8,
         choices=ROLE_CHOICES,
     )
-    user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="users"
+    )
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+    )
 
     def __str__(self):
         return "{}_{}".format(self.user.__str__(), self.project.__str__())
@@ -83,7 +88,9 @@ class Issue(models.Model):
         max_length=7,
         choices=STATUS_CHOICES,
     )
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name="issues"
+    )
     author = models.ForeignKey(
         to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="author"
     )
@@ -99,7 +106,7 @@ class Issue(models.Model):
 class Comment(models.Model):
     description = models.CharField(max_length=255)
     author = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="comments")
     created_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
