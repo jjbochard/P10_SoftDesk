@@ -13,7 +13,7 @@ class Project(models.Model):
         (ANDROID, "Android"),
         (IOS, "iOS"),
     ]
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=255)
     type = models.CharField(
         max_length=7,
