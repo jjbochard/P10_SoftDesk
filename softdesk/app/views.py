@@ -5,11 +5,13 @@ from app.serializers import (
     IssueSerializer,
     ProjectSerializer,
 )
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 
 class ProjectViewset(ModelViewSet):
     serializer_class = ProjectSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return Project.objects.all()
