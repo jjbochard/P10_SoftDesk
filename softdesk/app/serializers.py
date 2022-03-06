@@ -1,5 +1,5 @@
 from app.models import Comment, Contributor, Issue, Project
-from rest_framework.serializers import ModelSerializer, ValidationError
+from rest_framework.serializers import ModelSerializer
 
 
 class IssueSerializer(ModelSerializer):
@@ -24,7 +24,6 @@ class ContributorSerializer(ModelSerializer):
     class Meta:
         model = Contributor
         fields = [
-            "id",
             "role",
             "user",
             "project",
@@ -42,11 +41,6 @@ class ProjectSerializer(ModelSerializer):
             "user",
             "issues",
         ]
-
-    def validate_title(self, value):
-        if Project.objects.filter(title=value).exists:
-            raise ValidationError("Project already exists")
-        return value
 
 
 class CommentSerializer(ModelSerializer):
