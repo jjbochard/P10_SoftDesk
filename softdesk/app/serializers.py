@@ -31,6 +31,8 @@ class ContributorSerializer(ModelSerializer):
 
 
 class ProjectSerializer(ModelSerializer):
+    user = ContributorSerializer(source="users", read_only=True, many=True)
+
     class Meta:
         model = Project
         fields = [
@@ -39,8 +41,16 @@ class ProjectSerializer(ModelSerializer):
             "description",
             "type",
             "user",
-            "issues",
         ]
+
+    def create(self, validated_data):
+        project = Project.objects.create(**validated_data)
+        Contributor.objects.create(
+            project_id=project.id,
+            role="AUTHOR",
+            user_id=self.context["request"].user.id,
+        )
+        return project
 
 
 class CommentSerializer(ModelSerializer):
