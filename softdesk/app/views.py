@@ -1,34 +1,39 @@
 from app.models import Comment, Contributor, Issue, Project
+from app.permissions import IsAuthor
 from app.serializers import (
     CommentSerializer,
     ContributorSerializer,
     IssueSerializer,
     ProjectSerializer,
 )
-from rest_framework.mixins import CreateModelMixin, ListModelMixin, UpdateModelMixin
+from rest_framework.mixins import (
+    CreateModelMixin,
+    DestroyModelMixin,
+    ListModelMixin,
+    UpdateModelMixin,
+)
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 
 class ProjectViewset(
-    GenericViewSet, CreateModelMixin, ListModelMixin, UpdateModelMixin
+    GenericViewSet,
+    CreateModelMixin,
+    ListModelMixin,
+    UpdateModelMixin,
+    DestroyModelMixin,
 ):
     serializer_class = ProjectSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsAuthor)
 
     def get_queryset(self):
-        return Project.objects.filter(
-            contributor__role="AUTHOR", contributor__user=self.request.user
-        )
+        return Project.objects.filter(contributor__user=self.request.user)
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def patch(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 class IssueViewset(ModelViewSet):
