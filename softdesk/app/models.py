@@ -37,15 +37,21 @@ class Contributor(models.Model):
         choices=ROLE_CHOICES,
     )
     user = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="users"
+        to=settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="contributor_user",
     )
     project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
+        related_name="contributor_project",
     )
 
+    class Meta:
+        unique_together = ["user", "project", "role"]
+
     def __str__(self):
-        return "{}_{}".format(self.user.__str__(), self.project.__str__())
+        return f"{self.user.__str__()}_{self.project.__str__()}"
 
 
 class Issue(models.Model):
@@ -66,7 +72,7 @@ class Issue(models.Model):
         (LOW, "Low"),
     )
     TODO = "TODO"
-    INPROGRESS = "PROGESS"
+    INPROGRESS = "PROGRESS"
     DONE = "DONE"
     STATUS_CHOICES = (
         (TODO, "To Do"),
@@ -85,7 +91,7 @@ class Issue(models.Model):
         choices=PRIORITY_CHOICES,
     )
     status = models.CharField(
-        max_length=7,
+        max_length=8,
         choices=STATUS_CHOICES,
     )
     project = models.ForeignKey(
@@ -105,7 +111,11 @@ class Issue(models.Model):
 
 class Comment(models.Model):
     description = models.CharField(max_length=255)
-    author = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        to=settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="author_comment",
+    )
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="comments")
     created_time = models.DateTimeField(auto_now_add=True)
 
