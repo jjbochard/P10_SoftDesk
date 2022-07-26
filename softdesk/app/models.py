@@ -39,12 +39,12 @@ class Contributor(models.Model):
     user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="contributor_user",
+        related_name="contributors",
     )
     project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
-        related_name="contributor_project",
+        related_name="contributors",
     )
 
     class Meta:
@@ -98,10 +98,14 @@ class Issue(models.Model):
         Project, on_delete=models.CASCADE, related_name="issues"
     )
     author = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="author"
+        to=settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="author_issues",
     )
     assignee = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="assignee"
+        to=settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="assignee_issues",
     )
     created_time = models.DateTimeField(auto_now_add=True)
 
@@ -114,7 +118,7 @@ class Comment(models.Model):
     author = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="author_comment",
+        related_name="comments",
     )
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="comments")
     created_time = models.DateTimeField(auto_now_add=True)
