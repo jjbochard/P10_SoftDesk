@@ -20,9 +20,8 @@ class HasProjectPermission(BasePermission):
             Contributor.objects.filter(
                 project_id=obj.id, user=request.user.id, role="ASSIGNEE"
             ).exists()
-            and request.method not in author_methods
+            and request.method == "GET"
         ):
-
             return True
 
         return False
@@ -45,22 +44,6 @@ class HasContributorPermission(BasePermission):
         ):
             return True
 
-    def has_object_permission(self, request, view, obj):
-        if (
-            Contributor.objects.filter(user=request.user)
-            .filter(project=view.kwargs["project_pk"], role="AUTHOR")
-            .exists()
-        ):
-            return True
-
-        if (
-            Contributor.objects.filter(user=request.user)
-            .filter(project=view.kwargs["project_pk"], role="ASSIGNEE")
-            .exists()
-            and request.method not in author_methods
-        ):
-            return True
-
         return False
 
 
@@ -74,37 +57,35 @@ class HasIssuePermission(BasePermission):
         )
 
     def has_object_permission(self, request, view, obj):
-        if obj.author == request.user and request.method in author_methods:
+        if obj.author == request.user:
             return True
-        return bool(
-            (
-                Contributor.objects.filter(
-                    user=request.user,
-                    project=view.kwargs["project_pk"],
-                ).exists()
-                and request.method in contributor_methods
-            )
-        )
+        if (
+            Contributor.objects.filter(
+                user=request.user, project=view.kwargs["project_pk"]
+            ).exists()
+            and request.method == "GET"
+        ):
+            return True
+        return False
 
 
 class HasCommentPermission(BasePermission):
     def has_permission(self, request, view):
         return bool(
-            Contributor.objects.filter(user=request.user)
-            .filter(project=view.kwargs["project_pk"])
-            .exists()
+            Contributor.objects.filter(
+                user=request.user,
+                project=view.kwargs["project_pk"],
+            ).exists()
         )
 
     def has_object_permission(self, request, view, obj):
-        if obj.author == request.user and request.method in author_methods:
+        if obj.author == request.user:
             return True
-
-        return bool(
-            (
-                Contributor.objects.filter(
-                    user=request.user,
-                    project=view.kwargs["project_pk"],
-                ).exists()
-                and request.method in contributor_methods
-            )
-        )
+        if (
+            Contributor.objects.filter(
+                user=request.user, project=view.kwargs["project_pk"]
+            ).exists()
+            and request.method == "GET"
+        ):
+            return True
+        return False
