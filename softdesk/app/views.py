@@ -20,7 +20,7 @@ from rest_framework.mixins import (
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from rest_framework.viewsets import GenericViewSet
 
 
 class ProjectViewset(
@@ -130,7 +130,12 @@ class CommentViewset(
         return Response(serializer.data)
 
 
-class UserViewset(ModelViewSet):
+class UserViewset(
+    GenericViewSet,
+    CreateModelMixin,
+    ListModelMixin,
+    DestroyModelMixin,
+):
     serializer_class = ContributorSerializer
     permission_classes = (IsAuthenticated, HasContributorPermission)
     http_method_names = ["post", "get", "delete"]
@@ -161,3 +166,6 @@ class UserViewset(ModelViewSet):
 
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_400_BAD_REQUEST)
