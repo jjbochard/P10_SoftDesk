@@ -16,7 +16,6 @@ project_router.register("users", UserViewset, basename="users")
 # /projects/{project_pk}/issues/
 # /projects/{project_pk}/issues/{issue_pk}/
 # /projects/{project_pk}/users/
-# /projects/{project_pk}/users/
 
 issues_router = routers.NestedSimpleRouter(project_router, "issues", lookup="issue")
 issues_router.register("comments", CommentViewset, basename="comments")
