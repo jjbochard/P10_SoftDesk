@@ -16,6 +16,7 @@ from rest_framework.mixins import (
     CreateModelMixin,
     DestroyModelMixin,
     ListModelMixin,
+    RetrieveModelMixin,
     UpdateModelMixin,
 )
 from rest_framework.permissions import IsAuthenticated
@@ -23,13 +24,18 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 
-class ProjectViewset(
+class CustomViewset(
     GenericViewSet,
     CreateModelMixin,
-    ListModelMixin,
-    UpdateModelMixin,
     DestroyModelMixin,
+    ListModelMixin,
+    RetrieveModelMixin,
+    UpdateModelMixin,
 ):
+    pass
+
+
+class ProjectViewset(CustomViewset):
     serializer_class = ProjectSerializer
     permission_classes = (IsAuthenticated, HasProjectPermission)
     http_method_names = ["post", "get", "put", "delete"]
@@ -51,19 +57,8 @@ class ProjectViewset(
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
 
-
-class IssueViewset(
-    GenericViewSet,
-    CreateModelMixin,
-    ListModelMixin,
-    UpdateModelMixin,
-    DestroyModelMixin,
-):
+class IssueViewset(CustomViewset):
     serializer_class = IssueSerializer
     permission_classes = (IsAuthenticated, HasIssuePermission)
     http_method_names = ["post", "get", "put", "delete"]
@@ -87,19 +82,8 @@ class IssueViewset(
             message = "The assignee user is not a contributor of this project"
             return Response({"message": message}, status=status.HTTP_400_BAD_REQUEST)
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
 
-
-class CommentViewset(
-    GenericViewSet,
-    CreateModelMixin,
-    ListModelMixin,
-    UpdateModelMixin,
-    DestroyModelMixin,
-):
+class CommentViewset(CustomViewset):
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticated, HasCommentPermission)
     http_method_names = ["post", "get", "put", "delete"]
@@ -124,18 +108,8 @@ class CommentViewset(
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
 
-
-class UserViewset(
-    GenericViewSet,
-    CreateModelMixin,
-    ListModelMixin,
-    DestroyModelMixin,
-):
+class UserViewset(CustomViewset):
     serializer_class = ContributorSerializer
     permission_classes = (IsAuthenticated, HasContributorPermission)
     http_method_names = ["post", "get", "delete"]
