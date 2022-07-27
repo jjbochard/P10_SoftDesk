@@ -85,4 +85,6 @@ You can install the configured pre commit hook with
 
 You can use [Postman](https://www.postman.com/) in order to test the endpoints
 
+If you're not familiar with it, follow the [tutorial](https://learning.postman.com/docs/getting-started/introduction/)
+
 ## Possible improvements
